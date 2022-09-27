@@ -31,17 +31,22 @@ namespace AStarAlgorithm
                 "|A             |",
                 "|--| |---------|",
                 "|              |",
-                "|   |--| |---| |",
-                "|   |     |    |",
-                "|---|     |    |",
+                "|---|--|-|---| |",
                 "|              |",
-                "|--| |------   |",
+                "|---| |---|-|--|",
+                "|              |",
+                "|--|-|------|  |",
                 "|              |",
                 "|   |-----|----|",
                 "|         |    |",
-                "|---|       |B |"
+                "|---|       | B|"
             };
-
+            //List<string> bảnĐồ = new List<string>
+            //{
+            //    "|A             |",
+            //    "|--| |---------|",
+            //    "|             B|"
+            //};
             var bắtĐầu = new ĐườngĐi();
             bắtĐầu.Y = bảnĐồ.FindIndex(x => x.Contains("A"));
             bắtĐầu.X = bảnĐồ[bắtĐầu.Y].IndexOf("A");
@@ -67,19 +72,37 @@ namespace AStarAlgorithm
                     //Đây là một sự lựa chọn ít tốn kém nhất
                     var đườngĐi = kiểmTraĐường;
                     Console.WriteLine("Thực hiện quay lui...");
+                    Console.WriteLine("Tọa độ truy ngược về điểm bắt đầu ([X : Y](Chi phí chặng)):");
+                    //Console.Write("{0:-5} : {1:-5}", "X", "Y");
                     while (true)
                     {
-                        Console.WriteLine($"{đườngĐi.X} : {đườngĐi.Y}");
+                        if (đườngĐi.X == bắtĐầu.X && đườngĐi.Y == bắtĐầu.Y)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.BackgroundColor = ConsoleColor.White;
+                            Console.Write($"[{đườngĐi.X} : {đườngĐi.Y}]({đườngĐi.ChiPhíChặng})");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkBlue;
+                            Console.BackgroundColor = ConsoleColor.White;
+                            Console.Write($"[{đườngĐi.X} : {đườngĐi.Y}]({đườngĐi.ChiPhíChặng})");
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.Write(" --> ");
+                            Console.ResetColor();
+                            
+                        }
                         if (bảnĐồ[đườngĐi.Y][đườngĐi.X] == ' ')
                         {
-                            var newbảnĐồRow = bảnĐồ[đườngĐi.Y].ToCharArray();
-                            newbảnĐồRow[đườngĐi.X] = '*';
-                            bảnĐồ[đườngĐi.Y] = new string(newbảnĐồRow);
+                            var dòngBảnĐồMới = bảnĐồ[đườngĐi.Y].ToCharArray();
+                            dòngBảnĐồMới[đườngĐi.X] = '*';
+                            bảnĐồ[đườngĐi.Y] = new string(dòngBảnĐồMới);
                         }
                         đườngĐi = đườngĐi.TrướcĐó;
                         if (đườngĐi == null)
                         {
-                            Console.WriteLine("Bản đồ sau khi chạy thuật toán A* :");
+                            Console.WriteLine("\nBản đồ sau khi chạy thuật toán A* :");
                             bảnĐồ.ForEach(x => {
                                 var charArr = x.ToCharArray();
                                 foreach (var ch in charArr)
