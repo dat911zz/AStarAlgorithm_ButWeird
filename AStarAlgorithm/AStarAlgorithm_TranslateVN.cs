@@ -26,6 +26,7 @@ namespace AStarAlgorithm
         
         public void ChạyTrươngChình()
         {
+            int tổngChiPhí = 0;
             List<string> bảnĐồ = new List<string>
             {
                 "|A             |",
@@ -72,26 +73,29 @@ namespace AStarAlgorithm
                     //Đây là một sự lựa chọn ít tốn kém nhất
                     var đườngĐi = kiểmTraĐường;
                     Console.WriteLine("Thực hiện quay lui...");
-                    Console.WriteLine("Tọa độ truy ngược về điểm bắt đầu ([X : Y](Chi phí chặng)):");
+                    Console.WriteLine("Tọa độ truy ngược về điểm bắt đầu ([X : Y]):");
                     //Console.Write("{0:-5} : {1:-5}", "X", "Y");
                     while (true)
                     {
+                        if (đườngĐi.X == kếtThúc.X && đườngĐi.Y == kếtThúc.Y)
+                        {
+                            tổngChiPhí = đườngĐi.ChiPhíChặng;
+                        }
                         if (đườngĐi.X == bắtĐầu.X && đườngĐi.Y == bắtĐầu.Y)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.BackgroundColor = ConsoleColor.White;
-                            Console.Write($"[{đườngĐi.X} : {đườngĐi.Y}]({đườngĐi.ChiPhíChặng})");
+                            Console.Write($"[{đườngĐi.X} : {đườngĐi.Y}]");
                             Console.ResetColor();
                         }
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.DarkBlue;
                             Console.BackgroundColor = ConsoleColor.White;
-                            Console.Write($"[{đườngĐi.X} : {đườngĐi.Y}]({đườngĐi.ChiPhíChặng})");
+                            Console.Write($"[{đườngĐi.X} : {đườngĐi.Y}]");
                             Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write(" --> ");
-                            Console.ResetColor();
-                            
+                            Console.ResetColor();                        
                         }
                         if (bảnĐồ[đườngĐi.Y][đườngĐi.X] == ' ')
                         {
@@ -102,7 +106,8 @@ namespace AStarAlgorithm
                         đườngĐi = đườngĐi.TrướcĐó;
                         if (đườngĐi == null)
                         {
-                            Console.WriteLine("\nBản đồ sau khi chạy thuật toán A* :");
+                            Console.WriteLine("\n\nTổng chi phí từ A -> B: {0}", tổngChiPhí);
+                            Console.WriteLine("Bản đồ sau khi chạy thuật toán A*:");
                             bảnĐồ.ForEach(x => {
                                 var charArr = x.ToCharArray();
                                 foreach (var ch in charArr)
