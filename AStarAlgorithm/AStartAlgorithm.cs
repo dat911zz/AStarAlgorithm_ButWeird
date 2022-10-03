@@ -5,12 +5,15 @@ using System.Text;
 
 namespace AStarAlgorithm
 {
-    class AStartAlgorithm
+    class AStartAlgorithm_Eng
     {
-        static void Run()
+        public void Run()
         {
+            int TotalCost = 0;
+            List<Tile> ResultList = new List<Tile>();
             List<string> map = new List<string>
             {
+                "|--------------|",
                 "|A             |",
                 "|--| |---------|",
                 "|              |",
@@ -22,9 +25,45 @@ namespace AStarAlgorithm
                 "|              |",
                 "|   |-----|----|",
                 "|         |    |",
-                "|---|       |B |"
+                "|---|       |B |",
+                "|--------------|"
             };
+            //List<string> map = new List<string>
+            //{
+            //    "A - ",
+            //    "- --",
+            //    "   -",
+            //    "    ",
+            //    " -- ",
+            //    "    ",
+            //    "    ",
+            //    "    ",
 
+
+            //};
+            //List<string> map = new List<string>
+            //{
+            //    "|A   |           |  |B     |  |        |",
+            //    "|--| |-------| | |  |  |        |-| |  |",
+            //    "|  |         | | |  |--|--|--|  |   |  |",
+            //    "|    ||      | | |  |     |  |  | |-|  |",
+            //    "|-----| |----| | |     |     |--|    | |",
+            //    "|       |      | |  |--------| |---| |-|",
+            //    "| |--|  | |----| |  |    |   |-|       |",
+            //    "|    |--|      | |  |  |   |   |-| | | |",
+            //    "|--| |-------| | |     | |---|-|   |-| |",
+            //    "|  |         | | |  |----|   | | |     |",
+            //    "|    |------ | | |  |    | | |   | | | |",
+            //    "|-----|   || | | |     | | | | | |-| | |",
+            //    "|       |    | | |  |--|   |   | | | | |",
+            //    "|  | |-------| | |    |--------| | | | |",
+            //    "|  |   |   |   | |  | |   | |  | |     |",
+            //    "|  | |   |   | | |      |   |  | |--|  |",
+            //    "|---------|-|--| |  |-----| |  |    |  |",
+            //    "|                |        |      |  |  |",
+            //    "|---|  |-|---| |-|  |---| |----| |-----|",
+            //    "|                   |                  |"
+            //};
             var start = new Tile();
             start.Y = map.FindIndex(x => x.Contains("A"));
             start.X = map[start.Y].IndexOf("A");
@@ -44,25 +83,35 @@ namespace AStarAlgorithm
             {
                 var checkTile = activeTiles.OrderBy(x => x.CostDistance).First();
 
+                //Start drawing map when we found the destination
                 if (checkTile.X == finish.X && checkTile.Y == finish.Y)
                 {
                     //We found the destination and we can be sure (Because the the OrderBy above)
                     //That it's the most low cost option. 
                     var tile = checkTile;
-                    Console.WriteLine("Retracing steps backwards...");
+                    //Console.WriteLine("Retracing steps backwards...");
+                    Console.WriteLine("Thực hiện quay lui...");
+                    Console.WriteLine("Tọa độ truy ngược về điểm bắt đầu ([X : Y]):");
                     while (true)
                     {
                         Console.WriteLine($"{tile.X} : {tile.Y}");
+                        if (tile.X == finish.X && tile.Y == finish.Y)
+                        {
+                            TotalCost = tile.CostDistance;
+                        }
                         if (map[tile.Y][tile.X] == ' ')
                         {
                             var newMapRow = map[tile.Y].ToCharArray();
                             newMapRow[tile.X] = '*';
                             map[tile.Y] = new string(newMapRow);
                         }
+                        ResultList.Add(new Tile() { X = tile.X, Y = tile.Y, Cost = tile.Cost, Distance = tile.Distance});
                         tile = tile.Parent;
                         if (tile == null)
                         {
-                            Console.WriteLine("Map looks like :");
+                            //Console.WriteLine("Map looks like :");
+                            Console.WriteLine("\n\nTổng chi phí từ A -> B: {0}", TotalCost);
+                            Console.WriteLine("Bản đồ sau khi chạy thuật toán A*:");
                             map.ForEach(x =>
                             {
                                 var charArr = x.ToCharArray();
@@ -83,8 +132,28 @@ namespace AStarAlgorithm
                                 Console.WriteLine();
                             });
                             Console.WriteLine("Done!");
+                            ResultList.Reverse();
+                            List<Tile> listFollowX = new List<Tile>();
+                            List<Tile> listFollowY = new List<Tile>();
+                            //ResultList.ForEach(x =>
+                            //{
+                            //    if (ResultList.IndexOf(x) == 0)
+                            //    {
+                            //        //Console.WriteLine("[{0}:{1}] {2}", x.X, x.Y, ResultList.IndexOf(x));
+                            //    }
+                            //    else
+                            //    {
+                            //        if (ResultList[ResultList.IndexOf(x)].X != ResultList[ResultList.IndexOf(x)-1].X)
+                            //        {
+                            //            //listFollowX.Add(x);
+                            //            Console.WriteLine("[{0}:{1}]", x.X, x.Y);
+                            //        }
+                            //    }
+                            //});
+                            HeuristicCalculator(map, start, finish);
                             return;
                         }
+                 
                     }
                 }
 
@@ -117,9 +186,10 @@ namespace AStarAlgorithm
                 }
             }
 
-            Console.WriteLine("No Path Found!");
+            //Console.WriteLine("No Path Found!");
+            Console.WriteLine("Không tìm thấy đường!");
         }
-        private static List<Tile> GetWalkableTiles(List<string> map, Tile currentTile, Tile targetTile)
+        private List<Tile> GetWalkableTiles(List<string> map, Tile currentTile, Tile targetTile)
         {
             var possibleTiles = new List<Tile>()
             {
@@ -140,6 +210,93 @@ namespace AStarAlgorithm
                     .Where(tile => map[tile.Y][tile.X] == ' ' || map[tile.Y][tile.X] == 'B')
                     .ToList();
         }
+        private void HeuristicCalculator(List<string> map, Tile start, Tile finish)
+        {
+            List<Tile> listCorner = new List<Tile>();
+            Array2D arr2D = new Array2D(map);
+            arr2D.Show2DArray();
+            //Find corner          
+            listCorner.Add(new Tile() { X = start.X, Y = start.Y });
+            listCorner.AddRange(new List<Tile>(FindCorners(arr2D)));
+            listCorner.Add(new Tile() { X = finish.X, Y = finish.Y });
+            //Show list of corner
+            Console.Write("\nTính Heuristic: ");
+            listCorner.ForEach(x =>
+            {
+                x.SetDistance(finish.X, finish.Y);
+                Console.Write("\n[{0}:{1}] = {2}", x.X, x.Y, x.Distance);
+            });
+        }
+        private List<Tile> FindCorners(Array2D a)
+        {
+            List<Tile> tmpList = new List<Tile>();
+            int countPath = 0;
+            #region cmt
+            for (int i = 0; i < a.m; i++)
+            {
+                for (int j = 0; j < a.n; j++)
+                {
+                    //Check các điểm trong 
+                    if (a.arr[i, j] == 1)
+                    {
+                        if (j - 1 > 0 && j + 1 < a.n - 1)
+                        {
+                            // 1
+                            if (a.arr[i, j - 1] == 1 && a.arr[i, j + 1] != 1)
+                            {
+                                if (a.arr[i + 1, j] == 1 || a.arr[i - 1, j] == 1)
+                                {
+                                    countPath++;
+                                }
+                            }
+                            // 2
+                            if (a.arr[i - 1, j] == 1 && a.arr[i + 1, j] != 1)
+                            {
+                                if (a.arr[i, j + 1] == 1 || a.arr[i, j - 1] == 1)
+                                {
+                                    countPath++;
+                                }
+                            }
+                            // 3
+                            if (a.arr[i, j - 1] != 1 && a.arr[i, j + 1] == 1)
+                            {
+                                if (a.arr[i + 1, j] == 1 || a.arr[i - 1, j] == 1)
+                                {
+                                    countPath++;
+                                }
+                            }
+                            // 4
+                            if (a.arr[i - 1, j] != 1 && a.arr[i + 1, j] == 1)
+                            {
+                                if (a.arr[i, j + 1] == 1 || a.arr[i, j - 1] == 1)
+                                {
+                                    countPath++;
+                                }
+                            }
+                        }
+                    }
+                    if (countPath == 2)
+                    {
+                        //Console.WriteLine(" {0}:{1}", i, j);
+                        ////a.arr[i, j]++;
+                        tmpList.Add(new Tile() { X = i, Y = j });
+                    }
+                    countPath = 0;
+                }
+            }
+            tmpList.ForEach(x => {
+                Console.Write($" [{x.X}:{x.Y}]");
+            });
+            tmpList.ForEach(x => {
+                a.arr[x.X, x.Y]++;
+            });
+            Console.WriteLine();
+            //a.Show2DArray();
+            #endregion
+            return tmpList;
+        }
+
+
     }
     class Tile
     {
@@ -149,12 +306,69 @@ namespace AStarAlgorithm
         public int Distance { get; set; }
         public int CostDistance => Cost + Distance;
         public Tile Parent { get; set; }
-
+        
         //The distance is essentially the estimated distance, ignoring walls to our target. 
         //So how many tiles left and right, up and down, ignoring walls, to get there. 
         public void SetDistance(int targetX, int targetY)
         {
             this.Distance = Math.Abs(targetX - X) + Math.Abs(targetY - Y);
+        }
+    }
+    class Array2D
+    {
+        public int m, n;
+        public int[,] arr;
+        public Array2D()
+        {
+
+        }
+        public Array2D(List<string> map)
+        {
+            m = map.Count;
+            n = map[0].Length;
+            arr = new int[m, n];
+            for (int i = 0; i < map.Count; i++)
+            {
+                var tmp = map[i].ToCharArray();
+                for (int j = 0; j < map[0].Length; j++)
+                {
+                    if (tmp[j].Equals('*') || tmp[j].Equals('A') || tmp[j].Equals('B'))
+                    {
+                        arr[i, j] = 1;
+                    }
+                    else
+                    {
+                        if (tmp[j].Equals('|') || tmp[j].Equals('-'))
+                        {
+                            arr[i, j] = -1;
+                        }
+                        else
+                        {
+                            arr[i, j] = 0;
+                        }
+                    }
+                }
+            }
+        }
+        public void Show2DArray()
+        {
+            for (int i = 0; i < m; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    if (arr[i, j] == 1)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    }
+                    if (arr[i, j] == -1)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                    }
+                    Console.Write(" {0,2}", arr[i, j]);
+                    Console.ResetColor();
+                }
+                Console.WriteLine();
+            }
         }
     }
 }

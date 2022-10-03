@@ -9,7 +9,8 @@ namespace AStarAlgorithm
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.Unicode;
-            new AStarAlgorithm_TranslateVN().ChạyTrươngChình();
+            //new AStarAlgorithm_TranslateVN().ChạyTrươngChình();
+            new AStartAlgorithm_Eng().Run();
         }      
     }
 }
