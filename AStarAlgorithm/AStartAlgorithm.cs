@@ -11,23 +11,23 @@ namespace AStarAlgorithm
         {
             int TotalCost = 0;
             List<Tile> ResultList = new List<Tile>();
-            List<string> map = new List<string>
-            {
-                "|--------------|",
-                "|A             |",
-                "|--| |---------|",
-                "|              |",
-                "|   |--| |---| |",
-                "|   |     |    |",
-                "|---|     |    |",
-                "|              |",
-                "|--| |------   |",
-                "|              |",
-                "|   |-----|----|",
-                "|         |    |",
-                "|---|       |B |",
-                "|--------------|"
-            };
+            //List<string> map = new List<string>
+            //{
+            //    "|--------------|",
+            //    "|A             |",
+            //    "|--| |---------|",
+            //    "|              |",
+            //    "|   |--| |---| |",
+            //    "|   |     |    |",
+            //    "|---|     |    |",
+            //    "|              |",
+            //    "|--| |------   |",
+            //    "|              |",
+            //    "|   |-----|----|",
+            //    "|         |    |",
+            //    "|---|       |B |",
+            //    "|--------------|"
+            //};
             //List<string> map = new List<string>
             //{
             //    "A - ",
@@ -41,29 +41,30 @@ namespace AStarAlgorithm
 
 
             //};
-            //List<string> map = new List<string>
-            //{
-            //    "|A   |           |  |B     |  |        |",
-            //    "|--| |-------| | |  |  |        |-| |  |",
-            //    "|  |         | | |  |--|--|--|  |   |  |",
-            //    "|    ||      | | |  |     |  |  | |-|  |",
-            //    "|-----| |----| | |     |     |--|    | |",
-            //    "|       |      | |  |--------| |---| |-|",
-            //    "| |--|  | |----| |  |    |   |-|       |",
-            //    "|    |--|      | |  |  |   |   |-| | | |",
-            //    "|--| |-------| | |     | |---|-|   |-| |",
-            //    "|  |         | | |  |----|   | | |     |",
-            //    "|    |------ | | |  |    | | |   | | | |",
-            //    "|-----|   || | | |     | | | | | |-| | |",
-            //    "|       |    | | |  |--|   |   | | | | |",
-            //    "|  | |-------| | |    |--------| | | | |",
-            //    "|  |   |   |   | |  | |   | |  | |     |",
-            //    "|  | |   |   | | |      |   |  | |--|  |",
-            //    "|---------|-|--| |  |-----| |  |    |  |",
-            //    "|                |        |      |  |  |",
-            //    "|---|  |-|---| |-|  |---| |----| |-----|",
-            //    "|                   |                  |"
-            //};
+            List<string> map = new List<string>
+            {   "|--------------------------------------|",
+                "|A   |           |  |B     |  |        |",
+                "|--| |-------| | |  |  |        |-| |  |",
+                "|  |         | | |  |--|--|--|  |   |  |",
+                "|    ||      | | |  |     |  |  | |-|  |",
+                "|-----| |----| | |     |     |--|    | |",
+                "|       |      | |  |--------| |---| |-|",
+                "| |--|  | |----| |  |    |   |-|       |",
+                "|    |--|      | |  |  |   |   |-| | | |",
+                "|--| |-------| | |     | |---|-|   |-| |",
+                "|  |         | | |  |----|   | | |     |",
+                "|    |------ | | |  |    | | |   | | | |",
+                "|-----|   || | | |     | | | | | |-| | |",
+                "|       |    | | |  |--|   |   | | | | |",
+                "|  | |-------| | |    |--------| | | | |",
+                "|  |   |   |   | |  | |   | |  | |     |",
+                "|  | |   |   | | |      |   |  | |--|  |",
+                "|---------|-|--| |  |-----| |  |    |  |",
+                "|                |        |      |  |  |",
+                "|---|  |-|---| |-|  |---| |----| |-----|",
+                "|                   |                  |",
+                "|--------------------------------------|"
+            };
             var start = new Tile();
             start.Y = map.FindIndex(x => x.Contains("A"));
             start.X = map[start.Y].IndexOf("A");
@@ -150,7 +151,7 @@ namespace AStarAlgorithm
                             //        }
                             //    }
                             //});
-                            HeuristicCalculator(map, start, finish);
+                            HeuristicCalculatorForAllConers(map, start, finish);
                             return;
                         }
                  
@@ -210,7 +211,7 @@ namespace AStarAlgorithm
                     .Where(tile => map[tile.Y][tile.X] == ' ' || map[tile.Y][tile.X] == 'B')
                     .ToList();
         }
-        private void HeuristicCalculator(List<string> map, Tile start, Tile finish)
+        private void HeuristicCalculatorForAllConers(List<string> map, Tile start, Tile finish)
         {
             List<Tile> listCorner = new List<Tile>();
             Array2D arr2D = new Array2D(map);
@@ -309,7 +310,7 @@ namespace AStarAlgorithm
         
         //The distance is essentially the estimated distance, ignoring walls to our target. 
         //So how many tiles left and right, up and down, ignoring walls, to get there. 
-        public void SetDistance(int targetX, int targetY)
+        public void SetDistance(int targetX, int targetY)//Manhattan Distance
         {
             this.Distance = Math.Abs(targetX - X) + Math.Abs(targetY - Y);
         }
